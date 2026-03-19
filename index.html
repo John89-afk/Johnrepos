@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VidaVerde — Salud & Alimentación</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep: #1a5c38;
+      --green-mid: #2d8653;
+      --green-light: #4caf80;
+      --green-pale: #d4edda;
+      --green-tint: #f0faf4;
+      --white: #ffffff;
+      --off-white: #f9fdf9;
+      --text-dark: #122b1e;
+      --text-mid: #3d6651;
+      --text-light: #7aad91;
+      --shadow: 0 4px 30px rgba(26,92,56,0.10);
+      --radius: 18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--off-white);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(45,134,83,0.12);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem; height: 68px;
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: var(--shadow); }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; color: var(--green-deep);
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .logo span { color: var(--green-mid); }
+
+    .nav-links {
+      display: flex; gap: 1.8rem; list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none; color: var(--text-mid);
+      font-weight: 500; font-size: .92rem;
+      padding: .3rem 0;
+      border-bottom: 2px solid transparent;
+      transition: color .25s, border-color .25s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--green-deep);
+      border-bottom-color: var(--green-mid);
+    }
+
+    /* SEARCH BAR */
+    .search-wrap {
+      position: relative; display: flex; align-items: center;
+    }
+    .search-wrap input {
+      background: var(--green-tint);
+      border: 1.5px solid var(--green-pale);
+      border-radius: 50px;
+      padding: .5rem 1rem .5rem 2.4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem; color: var(--text-dark);
+      width: 220px;
+      transition: border-color .25s, width .35s, box-shadow .25s;
+      outline: none;
+    }
+    .search-wrap input::placeholder { color: var(--text-light); }
+    .search-wrap input:focus {
+      border-color: var(--green-mid);
+      width: 270px;
+      box-shadow: 0 0 0 3px rgba(45,134,83,0.12);
+    }
+    .search-icon {
+      position: absolute; left: .75rem;
+      color: var(--text-light); font-size: 1rem; pointer-events: none;
+    }
+    #search-results {
+      position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+      background: white; border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(26,92,56,0.14);
+      overflow: hidden; display: none; z-index: 200;
+    }
+    #search-results.show { display: block; }
+    .search-result-item {
+      padding: .7rem 1.1rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--green-pale);
+      font-size: .88rem; color: var(--text-mid);
+      transition: background .2s;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: var(--green-tint); color: var(--green-deep); }
+
+    /* ─── PAGES ─── */
+    .page { display: none; padding-top: 68px; min-height: 100vh; }
+    .page.active { display: block; }
+
+    /* ═══ HOME PAGE ═══ */
+    .hero {
+      background: linear-gradient(135deg, var(--green-tint) 0%, #e8f7ee 60%, #d0f0de 100%);
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 3rem;
+      padding: 5rem 5rem 4rem;
+      min-height: 88vh;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; right: -100px; top: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(76,175,128,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-text { position: relative; z-index: 2; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(45,134,83,0.12); color: var(--green-deep);
+      padding: .35rem .9rem; border-radius: 50px;
+      font-size: .8rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; margin-bottom: 1.4rem;
+    }
+    .hero-tag::before { content: '🌿'; }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.15;
+      color: var(--green-deep);
+      margin-bottom: 1.2rem;
+    }
+    h1 em { font-style: italic; color: var(--green-mid); }
+    .hero-text p {
+      font-size: 1.08rem; color: var(--text-mid);
+      line-height: 1.7; max-width: 480px;
+      margin-bottom: 2rem;
+    }
+    .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.6rem; border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600; font-size: .95rem;
+      cursor: pointer; border: none;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s, background .2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--green-deep); color: white;
+      box-shadow: 0 4px 20px rgba(26,92,56,0.3);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(26,92,56,0.4); background: #14472c; }
+    .btn-outline {
+      background: white; color: var(--green-deep);
+      border: 2px solid var(--green-mid);
+    }
+    .btn-outline:hover { background: var(--green-tint); }
+
+    .hero-visual {
+      position: relative; display: flex; justify-content: center; align-items: center;
+    }
+    .hero-card-main {
+      background: white; border-radius: 28px;
+      padding: 2rem; box-shadow: var(--shadow);
+      width: 340px;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    .food-emoji { font-size: 4rem; text-align: center; margin-bottom: 1rem; }
+    .mini-stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: .6rem; margin-top: 1rem;
+    }
+    .mini-stat {
+      background: var(--green-tint); border-radius: 12px;
+      padding: .6rem; text-align: center;
+    }
+    .mini-stat strong { display: block; font-size: 1.1rem; color: var(--green-deep); }
+    .mini-stat span { font-size: .7rem; color: var(--text-light); }
+
+    .badge-float {
+      position: absolute; background: white;
+      border-radius: 16px; padding: .6rem 1rem;
+      box-shadow: 0 4px 20px rgba(26,92,56,0.15);
+      font-size: .82rem; font-weight: 600; color: var(--green-deep);
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .badge-float.top { top: 0; right: -20px; animation: float 5s ease-in-out infinite .5s; }
+    .badge-float.bottom { bottom: 30px; left: -20px; animation: float 4.5s ease-in-out infinite 1s; }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 4.5rem 5rem; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; color: var(--green-deep);
+      margin-bottom: .5rem;
+    }
+    .section-sub { color: var(--text-light); margin-bottom: 2.5rem; font-size: .95rem; }
+
+    /* CARDS GRID */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .card {
+      background: white; border-radius: var(--radius);
+      padding: 1.8rem;
+      box-shadow: 0 2px 16px rgba(26,92,56,0.07);
+      transition: transform .25s, box-shadow .25s;
+      cursor: pointer;
+    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 8px 32px rgba(26,92,56,0.15); }
+    .card-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+    .card h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--green-deep); margin-bottom: .5rem; }
+    .card p { font-size: .88rem; color: var(--text-mid); line-height: 1.6; }
+    .card-tag {
+      display: inline-block; margin-top: 1rem;
+      background: var(--green-tint); color: var(--green-mid);
+      font-size: .75rem; font-weight: 600;
+      padding: .2rem .7rem; border-radius: 50px;
+    }
+
+    /* TIPS SECTION */
+    .tips-section { background: var(--green-deep); color: white; }
+    .tips-section .section-title { color: white; }
+    .tips-section .section-sub { color: var(--green-light); }
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+    .tip-item {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 1.4rem;
+      transition: background .2s;
+    }
+    .tip-item:hover { background: rgba(255,255,255,0.14); }
+    .tip-num { font-size: 2rem; font-weight: 700; color: var(--green-light); opacity: .5; }
+    .tip-item h4 { font-size: .95rem; margin: .3rem 0 .4rem; }
+    .tip-item p { font-size: .82rem; color: rgba(255,255,255,.65); line-height: 1.5; }
+
+    /* NEWSLETTER */
+    .newsletter {
+      background: linear-gradient(120deg, var(--green-tint) 0%, #e2f5e9 100%);
+      text-align: center; border-radius: 24px;
+      margin: 0 5rem 4rem; padding: 3.5rem 2rem;
+    }
+    .newsletter h2 { font-family: 'Playfair Display', serif; color: var(--green-deep); margin-bottom: .5rem; }
+    .newsletter p { color: var(--text-mid); margin-bottom: 1.5rem; }
+    .newsletter-form { display: flex; gap: .7rem; justify-content: center; flex-wrap: wrap; }
+    .newsletter-form input {
+      padding: .75rem 1.4rem; border-radius: 50px;
+      border: 1.5px solid var(--green-pale);
+      font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      width: 300px; outline: none;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .newsletter-form input:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(45,134,83,0.12);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--text-dark); color: rgba(255,255,255,.7);
+      text-align: center; padding: 2rem 5rem;
+      font-size: .85rem;
+    }
+    footer strong { color: white; }
+
+    /* ═══ INNER PAGES ═══ */
+    .inner-hero {
+      background: linear-gradient(135deg, var(--green-tint) 0%, white 100%);
+      padding: 4rem 5rem 3rem;
+      border-bottom: 1px solid var(--green-pale);
+    }
+    .inner-hero .page-tag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .78rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--green-mid);
+      margin-bottom: 1rem;
+    }
+    .inner-hero h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem; color: var(--green-deep);
+      margin-bottom: .7rem;
+    }
+    .inner-hero p { color: var(--text-mid); font-size: 1.05rem; max-width: 650px; line-height: 1.7; }
+
+    .content-area { padding: 3rem 5rem; }
+    .content-area h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; color: var(--green-deep);
+      margin: 2rem 0 .8rem;
+    }
+    .content-area p { color: var(--text-mid); line-height: 1.75; margin-bottom: 1rem; }
+
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem; margin: 2rem 0; }
+    .info-card {
+      background: white; border-radius: 16px; padding: 1.6rem;
+      border-left: 4px solid var(--green-mid);
+      box-shadow: 0 2px 14px rgba(26,92,56,0.07);
+    }
+    .info-card h4 { color: var(--green-deep); font-size: 1rem; margin-bottom: .5rem; }
+    .info-card p { font-size: .87rem; color: var(--text-mid); line-height: 1.6; margin: 0; }
+    .info-card .emoji { font-size: 1.8rem; margin-bottom: .8rem; }
+
+    .food-table {
+      width: 100%; border-collapse: collapse;
+      background: white; border-radius: 16px;
+      overflow: hidden; box-shadow: 0 2px 16px rgba(26,92,56,0.08);
+      margin: 1.5rem 0;
+    }
+    .food-table th {
+      background: var(--green-deep); color: white;
+      padding: .9rem 1.2rem; text-align: left;
+      font-size: .88rem; font-weight: 600;
+    }
+    .food-table td {
+      padding: .8rem 1.2rem; border-bottom: 1px solid var(--green-pale);
+      font-size: .88rem; color: var(--text-mid);
+    }
+    .food-table tr:last-child td { border-bottom: none; }
+    .food-table tr:hover td { background: var(--green-tint); }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      color: var(--green-mid); font-weight: 600;
+      cursor: pointer; font-size: .9rem;
+      background: none; border: none;
+      transition: color .2s; margin-bottom: 1.5rem;
+    }
+    .back-btn:hover { color: var(--green-deep); }
+
+    /* Progress bars */
+    .progress-wrap { margin: .8rem 0 1.4rem; }
+    .progress-label { display: flex; justify-content: space-between; font-size: .8rem; color: var(--text-light); margin-bottom: .3rem; }
+    .progress-bar { height: 8px; background: var(--green-pale); border-radius: 50px; overflow: hidden; }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--green-mid), var(--green-light));
+      border-radius: 50px; width: 0;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Tab system */
+    .tab-bar { display: flex; gap: .5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .tab-btn {
+      padding: .5rem 1.2rem; border-radius: 50px;
+      border: 1.5px solid var(--green-pale);
+      background: white; color: var(--text-mid);
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      cursor: pointer; font-size: .88rem;
+      transition: all .2s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--green-deep); color: white; border-color: var(--green-deep);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--green-deep); color: white;
+      padding: .9rem 1.6rem; border-radius: 12px;
+      font-size: .9rem; font-weight: 500;
+      box-shadow: 0 8px 30px rgba(26,92,56,0.3);
+      transform: translateY(80px); opacity: 0;
+      transition: all .4s cubic-bezier(.4,0,.2,1);
+      z-index: 999;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Checklist */
+    .checklist { list-style: none; margin: 1rem 0; }
+    .checklist li {
+      display: flex; align-items: center; gap: .8rem;
+      padding: .7rem .9rem; border-radius: 10px;
+      margin-bottom: .5rem; cursor: pointer;
+      transition: background .2s;
+    }
+    .checklist li:hover { background: var(--green-tint); }
+    .check-box {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid var(--green-mid); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .checklist li.checked .check-box {
+      background: var(--green-mid); border-color: var(--green-mid);
+    }
+    .checklist li.checked .check-box::after { content: '✓'; color: white; font-size: .8rem; font-weight: 700; }
+    .checklist li.checked span { text-decoration: line-through; color: var(--text-light); }
+
+    /* ─── NUTRITIONIST CARDS ─── */
+    .nutri-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.6rem; margin-bottom: 3rem; }
+    .nutri-card {
+      background: white; border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 18px rgba(26,92,56,0.09);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .nutri-card:hover { transform: translateY(-5px); box-shadow: 0 10px 36px rgba(26,92,56,0.16); }
+    .nutri-header {
+      background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+      padding: 1.8rem 1.8rem 1rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .nutri-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 3px solid rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; flex-shrink: 0;
+    }
+    .nutri-header-text h3 { color: white; font-size: 1.05rem; margin-bottom: .2rem; }
+    .nutri-header-text span { color: rgba(255,255,255,.75); font-size: .82rem; }
+    .nutri-specialty {
+      display: inline-block; background: rgba(255,255,255,.18);
+      color: white; font-size: .72rem; font-weight: 600;
+      padding: .2rem .7rem; border-radius: 50px; margin-top: .4rem;
+      letter-spacing: .04em;
+    }
+    .nutri-body { padding: 1.4rem 1.8rem 1.8rem; }
+    .nutri-body p { font-size: .86rem; color: var(--text-mid); line-height: 1.6; margin-bottom: 1rem; }
+    .nutri-info { display: flex; flex-direction: column; gap: .45rem; margin-bottom: 1.2rem; }
+    .nutri-info-row { display: flex; align-items: center; gap: .6rem; font-size: .84rem; color: var(--text-mid); }
+    .nutri-info-row .icon { font-size: 1rem; flex-shrink: 0; }
+    .nutri-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .btn-call {
+      background: var(--green-deep); color: white;
+      padding: .5rem 1.1rem; border-radius: 50px;
+      font-size: .83rem; font-weight: 600;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; gap: .4rem;
+      transition: background .2s, transform .2s;
+      text-decoration: none;
+    }
+    .btn-call:hover { background: #14472c; transform: scale(1.04); }
+    .btn-whatsapp {
+      background: #25D366; color: white;
+      padding: .5rem 1.1rem; border-radius: 50px;
+      font-size: .83rem; font-weight: 600;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; gap: .4rem;
+      transition: background .2s, transform .2s;
+      text-decoration: none;
+    }
+    .btn-whatsapp:hover { background: #1da851; transform: scale(1.04); }
+    .nutri-rating { display: flex; gap: .15rem; margin-bottom: .8rem; }
+    .star { color: #f5a623; font-size: .9rem; }
+    .star.empty { color: #ddd; }
+    .nutri-badge { background: var(--green-tint); color: var(--green-deep); font-size: .72rem; font-weight: 600; padding: .2rem .6rem; border-radius: 50px; margin-right: .3rem; }
+
+    /* ─── BALANCED MEALS ─── */
+    .meal-section { margin-bottom: 3rem; }
+    .meal-section h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--green-deep); margin-bottom: .4rem; }
+    .meal-section .meal-sub { color: var(--text-light); font-size: .9rem; margin-bottom: 1.5rem; }
+    .meals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.3rem; }
+    .meal-card {
+      background: white; border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 2px 14px rgba(26,92,56,0.07);
+      transition: transform .25s, box-shadow .25s;
+      cursor: pointer;
+    }
+    .meal-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(26,92,56,0.14); }
+    .meal-img {
+      height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+    }
+    .meal-img.bg1 { background: linear-gradient(135deg,#e8f7ee,#c8edd8); }
+    .meal-img.bg2 { background: linear-gradient(135deg,#fef9e7,#fdebd0); }
+    .meal-img.bg3 { background: linear-gradient(135deg,#eaf4fb,#d6eaf8); }
+    .meal-img.bg4 { background: linear-gradient(135deg,#fdf2f8,#f5d6ee); }
+    .meal-body { padding: 1.1rem 1.3rem 1.3rem; }
+    .meal-body h4 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--green-deep); margin-bottom: .35rem; }
+    .meal-body p { font-size: .82rem; color: var(--text-mid); line-height: 1.55; margin-bottom: .8rem; }
+    .meal-macros { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .macro-pill { background: var(--green-tint); color: var(--green-deep); font-size: .72rem; font-weight: 600; padding: .2rem .6rem; border-radius: 50px; }
+    .macro-pill.orange { background: #fef3e2; color: #c0760a; }
+    .macro-pill.blue { background: #e8f4fd; color: #1a6896; }
+    .macro-pill.pink { background: #fdf0f8; color: #9b2d7f; }
+
+    .meal-plan-table { width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(26,92,56,0.08); margin: 1.5rem 0; }
+    .meal-plan-table th { background: var(--green-deep); color: white; padding: .9rem 1.2rem; font-size: .85rem; font-weight: 600; }
+    .meal-plan-table td { padding: .8rem 1.2rem; border-bottom: 1px solid var(--green-pale); font-size: .84rem; color: var(--text-mid); vertical-align: top; }
+    .meal-plan-table tr:last-child td { border-bottom: none; }
+    .meal-plan-table tr:hover td { background: var(--green-tint); }
+    .meal-plan-table .meal-name { font-weight: 600; color: var(--green-deep); }
+    .kcal-badge { background: var(--green-pale); color: var(--green-deep); font-weight: 700; font-size: .8rem; padding: .15rem .5rem; border-radius: 50px; white-space: nowrap; }
+
+    .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .filter-btn { padding: .45rem 1rem; border-radius: 50px; border: 1.5px solid var(--green-pale); background: white; color: var(--text-mid); font-family: 'DM Sans', sans-serif; font-size: .84rem; font-weight: 500; cursor: pointer; transition: all .2s; }
+    .filter-btn.active, .filter-btn:hover { background: var(--green-mid); color: white; border-color: var(--green-mid); }
+
+    /* Emergency banner */
+    .emergency-banner { background: linear-gradient(135deg,#fff3cd,#ffeaa7); border: 1.5px solid #f0c040; border-radius: 14px; padding: 1.1rem 1.4rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: .8rem; }
+    .emergency-banner .eb-icon { font-size: 1.5rem; flex-shrink:0; }
+    .emergency-banner p { font-size: .86rem; color: #7d5a00; line-height: 1.5; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 2.5rem 1.5rem 2rem; }
+      .hero-visual { display: none; }
+      section { padding: 3rem 1.5rem; }
+      .newsletter { margin: 0 1.5rem 3rem; padding: 2.5rem 1.5rem; }
+      footer { padding: 2rem 1.5rem; }
+      .inner-hero, .content-area { padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo">🌿 Vida<span>Verde</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" class="active" onclick="showPage('home',this)">Inicio</a></li>
+    <li><a href="#" onclick="showPage('alimentacion',this)">Alimentación</a></li>
+    <li><a href="#" onclick="showPage('nutricion',this)">Nutrición</a></li>
+    <li><a href="#" onclick="showPage('recetas',this)">Recetas</a></li>
+    <li><a href="#" onclick="showPage('habitos',this)">Hábitos</a></li>
+    <li><a href="#" onclick="showPage('comidas',this)">Comidas</a></li>
+    <li><a href="#" onclick="showPage('nutriologos',this)">Nutriólogos</a></li>
+  </ul>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Buscar artículos…" autocomplete="off"/>
+    <div id="search-results"></div>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══════════════════════ HOME PAGE ══════════════════════ -->
+<div id="page-home" class="page active">
+
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-tag">Tu bienestar, nuestra misión</div>
+      <h1>Alimenta tu cuerpo,<br/><em>nutre tu vida</em></h1>
+      <p>Descubre guías de nutrición basadas en ciencia, recetas saludables y hábitos que transforman tu bienestar día a día.</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="showPage('alimentacion', null); showToast('¡Explorando Alimentación!')">Explorar ahora ✨</button>
+        <button class="btn btn-outline" onclick="showPage('habitos', null)">Mis hábitos 📋</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="badge-float top">⭐ +12k personas</div>
+      <div class="hero-card-main">
+        <div class="food-emoji">🥗</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--green-deep);text-align:center;margin-bottom:.5rem;">Balance del día</div>
+        <div class="mini-stats">
+          <div class="mini-stat"><strong>68%</strong><span>Carbos</span></div>
+          <div class="mini-stat"><strong>22%</strong><span>Proteína</span></div>
+          <div class="mini-stat"><strong>10%</strong><span>Grasas</span></div>
+        </div>
+      </div>
+      <div class="badge-float bottom">💧 2L agua hoy</div>
+    </div>
+  </div>
+
+  <!-- FEATURED TOPICS -->
+  <section>
+    <div class="section-title">Temas principales</div>
+    <div class="section-sub">Explora nuestras guías más populares</div>
+    <div class="cards-grid">
+      <div class="card" onclick="showPage('alimentacion',null)">
+        <div class="card-icon">🥦</div>
+        <h3>Alimentación saludable</h3>
+        <p>Grupos alimenticios, porciones ideales y cómo construir un plato balanceado cada día.</p>
+        <div class="card-tag">Guía completa</div>
+      </div>
+      <div class="card" onclick="showPage('nutricion',null)">
+        <div class="card-icon">⚗️</div>
+        <h3>Macronutrientes</h3>
+        <p>Proteínas, carbohidratos y grasas: entiende qué hace cada uno en tu cuerpo y en qué alimentos encontrarlos.</p>
+        <div class="card-tag">Nutrición</div>
+      </div>
+      <div class="card" onclick="showPage('recetas',null)">
+        <div class="card-icon">🍲</div>
+        <h3>Recetas nutritivas</h3>
+        <p>Ideas fáciles, rápidas y deliciosas para cocinar sin sacrificar salud ni sabor.</p>
+        <div class="card-tag">Recetas</div>
+      </div>
+      <div class="card" onclick="showPage('habitos',null)">
+        <div class="card-icon">🧘</div>
+        <h3>Hábitos saludables</h3>
+        <p>Checklist de rutinas diarias para mejorar tu energía, sueño y bienestar general.</p>
+        <div class="card-tag">Lifestyle</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIPS SECTION -->
+  <section class="tips-section">
+    <div class="section-title">5 consejos de oro</div>
+    <div class="section-sub">Pequeños cambios, grandes resultados</div>
+    <div class="tips-grid">
+      <div class="tip-item"><div class="tip-num">01</div><h4>Desayuna con proteína</h4><p>Un desayuno con proteína estabiliza el azúcar en sangre y reduce antojos a lo largo del día.</p></div>
+      <div class="tip-item"><div class="tip-num">02</div><h4>Llena la mitad del plato</h4><p>Verduras y frutas deben ocupar 50% de cada comida según el método del plato saludable.</p></div>
+      <div class="tip-item"><div class="tip-num">03</div><h4>Hidratación constante</h4><p>Bebe al menos 8 vasos de agua al día. Empieza cada mañana con un vaso en ayunas.</p></div>
+      <div class="tip-item"><div class="tip-num">04</div><h4>Come sin pantallas</h4><p>La alimentación consciente mejora la digestión y te ayuda a reconocer las señales de saciedad.</p></div>
+      <div class="tip-item"><div class="tip-num">05</div><h4>Duerme 7–9 horas</h4><p>El sueño regula las hormonas del hambre. Dormir mal aumenta el apetito hasta un 24%.</p></div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <div class="newsletter">
+    <h2>🌱 Recibe tips cada semana</h2>
+    <p>Únete a más de 12.000 personas que ya mejoran su salud con VidaVerde.</p>
+    <div class="newsletter-form">
+      <input type="email" id="emailInput" placeholder="tu@correo.com"/>
+      <button class="btn btn-primary" onclick="subscribeNewsletter()">Suscribirme</button>
+    </div>
+  </div>
+
+  <footer>
+    <strong>VidaVerde</strong> — Salud & Alimentación · 2024 · Hecho con 💚 para tu bienestar
+  </footer>
+</div>
+
+<!-- ══════════════════════ ALIMENTACIÓN PAGE ══════════════════════ -->
+<div id="page-alimentacion" class="page">
+  <div class="inner-hero">
+    <button class="back-btn" onclick="showPage('home',null)">← Volver al inicio</button>
+    <div class="page-tag">📖 Guía completa</div>
+    <h2>Alimentación saludable</h2>
+    <p>Todo lo que necesitas saber sobre cómo construir una dieta equilibrada, respetar los grupos alimenticios y comer bien sin complicarte la vida.</p>
+  </div>
+  <div class="content-area">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('ali','grupos',this)">Grupos alimenticios</button>
+      <button class="tab-btn" onclick="switchTab('ali','plato',this)">El plato saludable</button>
+      <button class="tab-btn" onclick="switchTab('ali','mitos',this)">Mitos y realidades</button>
+    </div>
+
+    <div id="ali-grupos" class="tab-content active">
+      <h3>Los 5 grupos alimenticios esenciales</h3>
+      <p>Una dieta equilibrada incluye alimentos de todos los grupos en proporciones adecuadas. Ningún grupo debe eliminarse sin razón médica.</p>
+      <div class="info-grid">
+        <div class="info-card"><div class="emoji">🌾</div><h4>Cereales y carbohidratos</h4><p>Arroz, pasta, pan integral, avena, quinoa. Son la principal fuente de energía del cuerpo y el cerebro. Preferir versiones integrales por su fibra.</p></div>
+        <div class="info-card"><div class="emoji">🥩</div><h4>Proteínas</h4><p>Carnes magras, pollo, pescado, huevos, leguminosas, tofu. Esenciales para construir y reparar tejidos, músculos y enzimas.</p></div>
+        <div class="info-card"><div class="emoji">🥛</div><h4>Lácteos</h4><p>Leche, yogur, queso. Fuente clave de calcio y vitamina D para huesos y dientes sanos. Elegir versiones bajas en grasa si es posible.</p></div>
+        <div class="info-card"><div class="emoji">🥦</div><h4>Verduras y frutas</h4><p>Deben ocupar la mayor parte del plato. Aportan vitaminas, minerales, fibra y antioxidantes que protegen contra enfermedades crónicas.</p></div>
+        <div class="info-card"><div class="emoji">🥑</div><h4>Grasas saludables</h4><p>Aceite de oliva, aguacate, frutos secos, semillas. Necesarias para la absorción de vitaminas liposolubles y la salud cardiovascular.</p></div>
+        <div class="info-card"><div class="emoji">💧</div><h4>Agua</h4><p>El nutriente más esencial. Regula la temperatura corporal, transporta nutrientes y elimina toxinas. Meta: 8 vasos diarios mínimo.</p></div>
+      </div>
+    </div>
+
+    <div id="ali-plato" class="tab-content">
+      <h3>El método del plato saludable</h3>
+      <p>Desarrollado por Harvard, el plato saludable es una guía visual simple y efectiva para armar comidas balanceadas sin contar calorías.</p>
+      <table class="food-table">
+        <thead><tr><th>Sección</th><th>Porción</th><th>Ejemplos</th><th>Por qué</th></tr></thead>
+        <tbody>
+          <tr><td>🥗 Verduras</td><td>50%</td><td>Espinaca, brócoli, pimiento, zanahoria</td><td>Fibra, vitaminas y bajo en calorías</td></tr>
+          <tr><td>🌾 Granos integrales</td><td>25%</td><td>Arroz integral, quinoa, pan 100% integral</td><td>Energía sostenida, sin picos de glucosa</td></tr>
+          <tr><td>🥩 Proteína saludable</td><td>25%</td><td>Pollo sin piel, pescado, leguminosas</td><td>Saciedad y reparación muscular</td></tr>
+          <tr><td>💧 Agua o té</td><td>Principal bebida</td><td>Agua, té verde, agua con limón</td><td>Hidratación sin azúcar añadida</td></tr>
+          <tr><td>🫒 Aceites saludables</td><td>Con moderación</td><td>Aceite de oliva extra virgen</td><td>Grasas insaturadas y antioxidantes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="ali-mitos" class="tab-content">
+      <h3>Mitos y realidades sobre alimentación</h3>
+      <div class="info-grid">
+        <div class="info-card"><div class="emoji">❌</div><h4>Mito: "Los carbohidratos engordan"</h4><p>Realidad: Los carbohidratos no son el problema. El exceso calórico total sí lo es. Los integrales son esenciales para la energía y la salud digestiva.</p></div>
+        <div class="info-card"><div class="emoji">❌</div><h4>Mito: "Saltarse el desayuno ayuda a bajar de peso"</h4><p>Realidad: Saltarse el desayuno puede aumentar el hambre durante el día y llevar a comer en exceso. La regularidad en las comidas regula mejor el metabolismo.</p></div>
+        <div class="info-card"><div class="emoji">❌</div><h4>Mito: "Los alimentos 'light' son siempre más sanos"</h4><p>Realidad: Muchos productos light compensan la reducción de grasa con más azúcar o aditivos. Leer etiquetas siempre es fundamental.</p></div>
+        <div class="info-card"><div class="emoji">✅</div><h4>Verdad: La variedad protege la salud</h4><p>Comer una amplia variedad de alimentos asegura el consumo de todos los micronutrientes necesarios que ningún suplemento puede reemplazar completamente.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ NUTRICIÓN PAGE ══════════════════════ -->
+<div id="page-nutricion" class="page">
+  <div class="inner-hero">
+    <button class="back-btn" onclick="showPage('home',null)">← Volver al inicio</button>
+    <div class="page-tag">⚗️ Ciencia nutricional</div>
+    <h2>Macronutrientes & vitaminas</h2>
+    <p>Entiende qué hace cada nutriente en tu cuerpo, cuánto necesitas y cómo obtenerlos de manera natural a través de la alimentación.</p>
+  </div>
+  <div class="content-area">
+    <h3>Distribución de macronutrientes recomendada</h3>
+    <p>La Organización Mundial de la Salud sugiere los siguientes rangos para un adulto sano con actividad moderada:</p>
+
+    <div class="progress-wrap">
+      <div class="progress-label"><span>🌾 Carbohidratos</span><span>45–65%</span></div>
+      <div class="progress-bar"><div class="progress-fill" data-width="55"></div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>🥩 Proteínas</span><span>10–35%</span></div>
+      <div class="progress-bar"><div class="progress-fill" data-width="25"></div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>🥑 Grasas</span><span>20–35%</span></div>
+      <div class="progress-bar"><div class="progress-fill" data-width="30"></div></div>
+    </div>
+
+    <h3>Vitaminas esenciales</h3>
+    <table class="food-table">
+      <thead><tr><th>Vitamina</th><th>Función</th><th>Fuentes</th><th>Deficiencia</th></tr></thead>
+      <tbody>
+        <tr><td>Vitamina C</td><td>Inmunidad y colágeno</td><td>Naranja, kiwi, pimiento rojo</td><td>Fatiga, infecciones frecuentes</td></tr>
+        <tr><td>Vitamina D</td><td>Huesos y sistema inmune</td><td>Sol, pescados grasos, huevos</td><td>Debilidad ósea, depresión</td></tr>
+        <tr><td>Vitamina B12</td><td>Sistema nervioso y sangre</td><td>Carnes, lácteos, huevos</td><td>Anemia, fatiga extrema</td></tr>
+        <tr><td>Vitamina A</td><td>Visión y piel</td><td>Zanahoria, espinaca, hígado</td><td>Problemas de visión nocturna</td></tr>
+        <tr><td>Ácido fólico</td><td>División celular y embarazo</td><td>Leguminosas, vegetales de hoja</td><td>Anemia megaloblástica</td></tr>
+        <tr><td>Vitamina E</td><td>Antioxidante, piel</td><td>Nueces, aceite de girasol, aguacate</td><td>Problemas neurológicos (raro)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Minerales clave</h3>
+    <div class="info-grid">
+      <div class="info-card"><div class="emoji">🦴</div><h4>Calcio (1000 mg/día)</h4><p>Huesos, dientes y función muscular. Fuentes: lácteos, brócoli, almendras, sardinas con espina.</p></div>
+      <div class="info-card"><div class="emoji">🩸</div><h4>Hierro (8–18 mg/día)</h4><p>Transporte de oxígeno en sangre. Fuentes: carnes rojas, leguminosas, espinaca, semillas de calabaza.</p></div>
+      <div class="info-card"><div class="emoji">❤️</div><h4>Magnesio (320–420 mg/día)</h4><p>Más de 300 reacciones enzimáticas. Fuentes: chocolate negro, plátano, frutos secos, aguacate.</p></div>
+      <div class="info-card"><div class="emoji">⚡</div><h4>Potasio (3500 mg/día)</h4><p>Presión arterial y función cardíaca. Fuentes: plátano, patata, frijoles, espinacas.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ RECETAS PAGE ══════════════════════ -->
+<div id="page-recetas" class="page">
+  <div class="inner-hero">
+    <button class="back-btn" onclick="showPage('home',null)">← Volver al inicio</button>
+    <div class="page-tag">🍲 Cocina saludable</div>
+    <h2>Recetas nutritivas</h2>
+    <p>Preparaciones simples, deliciosas y llenas de nutrientes para que comer bien sea fácil y placentero.</p>
+  </div>
+  <div class="content-area">
+    <div class="cards-grid">
+      <div class="card" onclick="showToast('¡Receta guardada! 🥣')">
+        <div class="card-icon">🥣</div>
+        <h3>Bowl de quinoa y vegetales</h3>
+        <p>Quinoa cocida con espinacas salteadas, aguacate, tomates cherry y aderezo de limón-tahini. Lista en 20 minutos.</p>
+        <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+          <div class="card-tag">🕐 20 min</div>
+          <div class="card-tag">🔥 380 kcal</div>
+          <div class="card-tag">💪 Proteína</div>
+        </div>
+      </div>
+      <div class="card" onclick="showToast('¡Receta guardada! 🐟')">
+        <div class="card-icon">🐟</div>
+        <h3>Salmón con espárragos al horno</h3>
+        <p>Filete de salmón con espárragos, aceite de oliva, ajo y limón. Rico en omega-3 y vitamina D. Solo una bandeja.</p>
+        <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+          <div class="card-tag">🕐 25 min</div>
+          <div class="card-tag">🔥 420 kcal</div>
+          <div class="card-tag">❤️ Cardio</div>
+        </div>
+      </div>
+      <div class="card" onclick="showToast('¡Receta guardada! 🥤')">
+        <div class="card-icon">🥤</div>
+        <h3>Smoothie verde energizante</h3>
+        <p>Espinaca, manzana verde, pepino, jengibre, limón y agua de coco. Un desayuno completo en vaso.</p>
+        <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+          <div class="card-tag">🕐 5 min</div>
+          <div class="card-tag">🔥 180 kcal</div>
+          <div class="card-tag">⚡ Energía</div>
+        </div>
+      </div>
+      <div class="card" onclick="showToast('¡Receta guardada! 🥗')">
+        <div class="card-icon">🥗</div>
+        <h3>Ensalada mediterránea</h3>
+        <p>Lechuga, garbanzos, aceitunas, pepino, tomate, feta y aceite de oliva. Clásico infalible, sin cocción.</p>
+        <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+          <div class="card-tag">🕐 10 min</div>
+          <div class="card-tag">🔥 310 kcal</div>
+          <div class="card-tag">🌱 Veggie</div>
+        </div>
+      </div>
+      <div class="card" onclick="showToast('¡Receta guardada! 🍳')">
+        <div class="card-icon">🍳</div>
+        <h3>Huevos pochados con tostada integral</h3>
+        <p>Desayuno clásico y proteico. Con aguacate aplastado, un toque de limón y semillas de chía.</p>
+        <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+          <div class="card-tag">🕐 12 min</div>
+          <div class="card-tag">🔥 350 kcal</div>
+          <div class="card-tag">🥚 Desayuno</div>
+        </div>
+      </div>
+      <div class="card" onclick="showToast('¡Receta guardada! 🍲')">
+        <div class="card-icon">🍲</div>
+        <h3>Sopa de lentejas con cúrcuma</h3>
+        <p>Lentejas rojas, zanahoria, tomate, espinacas y especias antiinflamatorias. Perfecta para cualquier época del año.</p>
+        <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+          <div class="card-tag">🕐 30 min</div>
+          <div class="card-tag">🔥 290 kcal</div>
+          <div class="card-tag">🧡 Antinflamatorio</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ HÁBITOS PAGE ══════════════════════ -->
+<div id="page-habitos" class="page">
+  <div class="inner-hero">
+    <button class="back-btn" onclick="showPage('home',null)">← Volver al inicio</button>
+    <div class="page-tag">📋 Checklist diario</div>
+    <h2>Mis hábitos saludables</h2>
+    <p>Marca tus hábitos del día. Pequeñas acciones consistentes construyen grandes resultados en tu salud.</p>
+  </div>
+  <div class="content-area">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:900px">
+      <div>
+        <h3>🌅 Rutina matutina</h3>
+        <ul class="checklist" id="morning-list">
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Vaso de agua al despertar</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Desayuno proteico</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>10 min de movimiento o estiramientos</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Tomar vitaminas o suplementos</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Planificar comidas del día</span></li>
+        </ul>
+
+        <h3 style="margin-top:1.5rem">🌙 Rutina nocturna</h3>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Cenar 2h antes de dormir</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Apagar pantallas 30 min antes</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>7–9 horas de sueño</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>☀️ Durante el día</h3>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>8 vasos de agua (2 litros)</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>5 porciones de frutas y verduras</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>30 min de actividad física</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Evitar ultraprocesados</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Comer sin distracciones al menos una vez</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Incluir proteína en cada comida</span></li>
+          <li onclick="toggleCheck(this)"><div class="check-box"></div><span>5 min de respiración consciente</span></li>
+        </ul>
+        <div style="margin-top:1.5rem;background:var(--green-tint);border-radius:14px;padding:1.2rem;text-align:center">
+          <div style="font-size:2rem" id="progress-emoji">🌱</div>
+          <div style="font-family:'Playfair Display',serif;color:var(--green-deep);font-size:1.05rem;margin:.3rem 0" id="progress-msg">¡Empieza tu día marcando hábitos!</div>
+          <div style="color:var(--text-light);font-size:.85rem" id="progress-count">0 de 15 completados</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ COMIDAS BALANCEADAS PAGE ══════════════════════ -->
+<div id="page-comidas" class="page">
+  <div class="inner-hero">
+    <button class="back-btn" onclick="showPage('home',null)">← Volver al inicio</button>
+    <div class="page-tag">🍽️ Guía de comidas</div>
+    <h2>Comidas Balanceadas</h2>
+    <p>Explora ideas de desayunos, almuerzos, cenas y snacks diseñados para cubrir tus necesidades nutricionales de forma deliciosa y variada.</p>
+  </div>
+  <div class="content-area">
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('com','desayuno',this)">🌅 Desayunos</button>
+      <button class="tab-btn" onclick="switchTab('com','almuerzo',this)">☀️ Almuerzos</button>
+      <button class="tab-btn" onclick="switchTab('com','cena',this)">🌙 Cenas</button>
+      <button class="tab-btn" onclick="switchTab('com','snacks',this)">🍎 Snacks</button>
+      <button class="tab-btn" onclick="switchTab('com','semanal',this)">📅 Plan semanal</button>
+    </div>
+
+    <!-- DESAYUNOS -->
+    <div id="com-desayuno" class="tab-content active">
+      <div class="meal-section">
+        <h3>Desayunos balanceados</h3>
+        <p class="meal-sub">El desayuno debe aportar entre 25–30% de tus calorías diarias, con proteína, fibra y grasas buenas.</p>
+        <div class="meals-grid">
+          <div class="meal-card" onclick="showToast('¡Guardado en mis favoritos! 🥣')">
+            <div class="meal-img bg1">🥣</div>
+            <div class="meal-body">
+              <h4>Avena con frutos rojos y nueces</h4>
+              <p>Avena cocida con leche de almendras, arándanos, frambuesas, nueces picadas y miel cruda. Alta en fibra soluble y antioxidantes.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 340 kcal</span><span class="macro-pill orange">Carb 52g</span><span class="macro-pill blue">Prot 12g</span><span class="macro-pill pink">Grasa 9g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado en mis favoritos! 🍳')">
+            <div class="meal-img bg2">🍳</div>
+            <div class="meal-body">
+              <h4>Omelet de vegetales con tostada</h4>
+              <p>3 huevos, espinacas, pimiento, cebolla y queso cottage. Con 1 rebanada de pan integral. Desayuno completo y saciador.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 390 kcal</span><span class="macro-pill orange">Carb 28g</span><span class="macro-pill blue">Prot 28g</span><span class="macro-pill pink">Grasa 18g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado en mis favoritos! 🫙')">
+            <div class="meal-img bg3">🫙</div>
+            <div class="meal-body">
+              <h4>Yogur griego con granola y kiwi</h4>
+              <p>Yogur griego natural (150g) con granola casera baja en azúcar, kiwi en rodajas y semillas de chía. Rico en probióticos.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 310 kcal</span><span class="macro-pill orange">Carb 38g</span><span class="macro-pill blue">Prot 18g</span><span class="macro-pill pink">Grasa 8g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado en mis favoritos! 🥞')">
+            <div class="meal-img bg4">🥞</div>
+            <div class="meal-body">
+              <h4>Hotcakes de avena y plátano</h4>
+              <p>Sin harina refinada: avena molida, plátano maduro, huevo y canela. Con miel de agave y fresas frescas. Gluten-friendly.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 360 kcal</span><span class="macro-pill orange">Carb 58g</span><span class="macro-pill blue">Prot 14g</span><span class="macro-pill pink">Grasa 7g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado en mis favoritos! 🥑')">
+            <div class="meal-img bg1">🥑</div>
+            <div class="meal-body">
+              <h4>Tostada de aguacate con huevo pochado</h4>
+              <p>Pan integral con aguacate machacado, huevo pochado encima, tomates cherry, aceite de oliva y escamas de sal. Clásico saludable.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 420 kcal</span><span class="macro-pill orange">Carb 32g</span><span class="macro-pill blue">Prot 18g</span><span class="macro-pill pink">Grasa 24g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado en mis favoritos! 🍓')">
+            <div class="meal-img bg2">🍓</div>
+            <div class="meal-body">
+              <h4>Smoothie bowl de fresa y espinaca</h4>
+              <p>Fresa, espinaca, plátano y leche de coco licuados. Con toppings de semillas, coco rallado y granola. Denso en micronutrientes.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 295 kcal</span><span class="macro-pill orange">Carb 48g</span><span class="macro-pill blue">Prot 8g</span><span class="macro-pill pink">Grasa 7g</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALMUERZOS -->
+    <div id="com-almuerzo" class="tab-content">
+      <div class="meal-section">
+        <h3>Almuerzos nutritivos y completos</h3>
+        <p class="meal-sub">El almuerzo debe ser la comida más completa del día: 35–40% del total calórico con todos los macronutrientes.</p>
+        <div class="meals-grid">
+          <div class="meal-card" onclick="showToast('¡Guardado! 🍗')">
+            <div class="meal-img bg3">🍗</div>
+            <div class="meal-body">
+              <h4>Pechuga a la plancha con arroz integral y brócoli</h4>
+              <p>150g de pollo marinado con limón y hierbas, arroz integral con ajo y perejil, brócoli al vapor. El almuerzo equilibrado por excelencia.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 480 kcal</span><span class="macro-pill orange">Carb 55g</span><span class="macro-pill blue">Prot 42g</span><span class="macro-pill pink">Grasa 10g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🫘')">
+            <div class="meal-img bg1">🫘</div>
+            <div class="meal-body">
+              <h4>Bowl de frijoles negros con quinoa</h4>
+              <p>Frijoles negros guisados, quinoa, aguacate, maíz, cilantro y salsa de tomate. Proteína vegetal completa con los 9 aminoácidos esenciales.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 510 kcal</span><span class="macro-pill orange">Carb 72g</span><span class="macro-pill blue">Prot 22g</span><span class="macro-pill pink">Grasa 14g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🐟')">
+            <div class="meal-img bg2">🐟</div>
+            <div class="meal-body">
+              <h4>Atún con ensalada de garbanzos</h4>
+              <p>Atún en agua, garbanzos cocidos, pepino, tomate, aceitunas, aceite de oliva y limón. Rápido, proteico y sin cocción.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 440 kcal</span><span class="macro-pill orange">Carb 45g</span><span class="macro-pill blue">Prot 38g</span><span class="macro-pill pink">Grasa 11g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🌮')">
+            <div class="meal-img bg4">🌮</div>
+            <div class="meal-body">
+              <h4>Tacos de pescado con col morada</h4>
+              <p>Tortillas de maíz, filete de tilapia a la plancha, ensalada de col, aguacate y salsa de mango-chile. Versión saludable y tropical.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 465 kcal</span><span class="macro-pill orange">Carb 52g</span><span class="macro-pill blue">Prot 30g</span><span class="macro-pill pink">Grasa 13g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🍜')">
+            <div class="meal-img bg3">🍜</div>
+            <div class="meal-body">
+              <h4>Sopa de pollo con fideos integrales</h4>
+              <p>Caldo casero de pollo, zanahoria, apio, cebolla, fideos integrales y cilantro. Reconfortante, hidratante y bajo en grasa.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 380 kcal</span><span class="macro-pill orange">Carb 42g</span><span class="macro-pill blue">Prot 28g</span><span class="macro-pill pink">Grasa 9g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🥙')">
+            <div class="meal-img bg1">🥙</div>
+            <div class="meal-body">
+              <h4>Wrap de pavo y vegetales asados</h4>
+              <p>Tortilla integral, pechuga de pavo, pimiento rojo asado, espinacas, mostaza Dijon y queso panela. Fácil y alto en proteína.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 420 kcal</span><span class="macro-pill orange">Carb 40g</span><span class="macro-pill blue">Prot 34g</span><span class="macro-pill pink">Grasa 11g</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENAS -->
+    <div id="com-cena" class="tab-content">
+      <div class="meal-section">
+        <h3>Cenas ligeras y nutritivas</h3>
+        <p class="meal-sub">La cena debe ser ligera (20–25% de calorías), baja en carbohidratos refinados y fácil de digerir. Idealmente 2h antes de dormir.</p>
+        <div class="meals-grid">
+          <div class="meal-card" onclick="showToast('¡Guardado! 🥗')">
+            <div class="meal-img bg2">🥗</div>
+            <div class="meal-body">
+              <h4>Ensalada de espinacas con salmón</h4>
+              <p>Espinacas frescas, salmón en lata o a la plancha, nueces, fresas, vinagreta de balsámico. Rica en omega-3 y hierro.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 320 kcal</span><span class="macro-pill orange">Carb 14g</span><span class="macro-pill blue">Prot 28g</span><span class="macro-pill pink">Grasa 18g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🥣')">
+            <div class="meal-img bg1">🥣</div>
+            <div class="meal-body">
+              <h4>Crema de zanahoria y jengibre</h4>
+              <p>Zanahoria, cebolla, jengibre fresco, leche de coco y cúrcuma. Antiinflamatoria, caliente y perfecta para cenar sin pesadez.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 210 kcal</span><span class="macro-pill orange">Carb 28g</span><span class="macro-pill blue">Prot 4g</span><span class="macro-pill pink">Grasa 9g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🍳')">
+            <div class="meal-img bg3">🍳</div>
+            <div class="meal-body">
+              <h4>Huevos revueltos con champiñones</h4>
+              <p>2 huevos, champiñones salteados en aceite de oliva, espinacas y queso feta. Baja en calorías, alta en proteína de calidad.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 270 kcal</span><span class="macro-pill orange">Carb 8g</span><span class="macro-pill blue">Prot 20g</span><span class="macro-pill pink">Grasa 17g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🐟')">
+            <div class="meal-img bg4">🐟</div>
+            <div class="meal-body">
+              <h4>Tilapia al limón con ejotes</h4>
+              <p>Filete de tilapia al horno con limón y ajo, acompañado de ejotes al vapor y puré ligero de coliflor en vez de papa.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 290 kcal</span><span class="macro-pill orange">Carb 18g</span><span class="macro-pill blue">Prot 32g</span><span class="macro-pill pink">Grasa 8g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🥦')">
+            <div class="meal-img bg2">🥦</div>
+            <div class="meal-body">
+              <h4>Stir fry de tofu y verduras</h4>
+              <p>Tofu firme salteado con brócoli, zanahoria, chícharos y salsa de soya baja en sodio. Cena vegetariana rápida y completa.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 310 kcal</span><span class="macro-pill orange">Carb 24g</span><span class="macro-pill blue">Prot 22g</span><span class="macro-pill pink">Grasa 12g</span></div>
+            </div>
+          </div>
+          <div class="meal-card" onclick="showToast('¡Guardado! 🫔')">
+            <div class="meal-img bg1">🫔</div>
+            <div class="meal-body">
+              <h4>Burrito bowl de vegetales al horno</h4>
+              <p>Camote, pimiento, cebolla y maíz asados sobre lechuga, frijoles y salsa fresca. Sin tortilla, sin culpa, lleno de sabor.</p>
+              <div class="meal-macros"><span class="macro-pill">🔥 340 kcal</span><span class="macro-pill orange">Carb 56g</span><span class="macro-pill blue">Prot 12g</span><span class="macro-pill pink">Grasa 6g</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SNACKS -->
+    <div id="com-snacks" class="tab-content">
+      <div class="meal-section">
+        <h3>Snacks inteligentes entre comidas</h3>
+        <p class="meal-sub">Un buen snack aporta entre 100–200 kcal, combina proteína o grasa saludable con fibra para mantener la saciedad.</p>
+        <div class="meals-grid">
+          <div class="meal-card" onclick="showToast('¡Snack guardado! 🍎')"><div class="meal-img bg1">🍎</div><div class="meal-body"><h4>Manzana con mantequilla de almendras</h4><p>1 manzana mediana con 1 cda de mantequilla de almendras natural sin azúcar añadida. Fibra + grasa buena = saciedad duradera.</p><div class="meal-macros"><span class="macro-pill">🔥 190 kcal</span><span class="macro-pill blue">Prot 4g</span><span class="macro-pill pink">Grasa 9g</span></div></div></div>
+          <div class="meal-card" onclick="showToast('¡Snack guardado! 🥕')"><div class="meal-img bg2">🥕</div><div class="meal-body"><h4>Palitos de zanahoria con hummus</h4><p>Zanahorias crudas cortadas en bastones con 3 cdas de hummus casero. Fibra, proteína vegetal y micronutrientes en un solo snack.</p><div class="meal-macros"><span class="macro-pill">🔥 130 kcal</span><span class="macro-pill blue">Prot 5g</span><span class="macro-pill orange">Carb 18g</span></div></div></div>
+          <div class="meal-card" onclick="showToast('¡Snack guardado! 🫐')"><div class="meal-img bg3">🫐</div><div class="meal-body"><h4>Yogur griego con moras</h4><p>Yogur griego 0% grasa con arándanos frescos y una pizca de canela. Alto en proteína y probióticos. Ideal post-ejercicio.</p><div class="meal-macros"><span class="macro-pill">🔥 120 kcal</span><span class="macro-pill blue">Prot 14g</span><span class="macro-pill orange">Carb 12g</span></div></div></div>
+          <div class="meal-card" onclick="showToast('¡Snack guardado! 🥜')"><div class="meal-img bg4">🥜</div><div class="meal-body"><h4>Puño de frutos secos mixtos</h4><p>30g de nueces, almendras y pistaches sin sal. La porción perfecta de grasas saludables, vitamina E y magnesio entre comidas.</p><div class="meal-macros"><span class="macro-pill">🔥 180 kcal</span><span class="macro-pill blue">Prot 6g</span><span class="macro-pill pink">Grasa 16g</span></div></div></div>
+          <div class="meal-card" onclick="showToast('¡Snack guardado! 🍫')"><div class="meal-img bg1">🍫</div><div class="meal-body"><h4>Chocolate negro con fresas</h4><p>2 cuadros (20g) de chocolate negro 70%+ con 5–6 fresas frescas. Antioxidantes, hierro y satisfacción dulce sin culpa.</p><div class="meal-macros"><span class="macro-pill">🔥 145 kcal</span><span class="macro-pill pink">Grasa 9g</span><span class="macro-pill orange">Carb 14g</span></div></div></div>
+          <div class="meal-card" onclick="showToast('¡Snack guardado! 🥚')"><div class="meal-img bg2">🥚</div><div class="meal-body"><h4>Huevo duro con aguacate</h4><p>1 huevo cocido partido a la mitad con ¼ aguacate y sal de mar. Proteína completa + grasa monoinsaturada = energía estable.</p><div class="meal-macros"><span class="macro-pill">🔥 165 kcal</span><span class="macro-pill blue">Prot 7g</span><span class="macro-pill pink">Grasa 13g</span></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAN SEMANAL -->
+    <div id="com-semanal" class="tab-content">
+      <h3>Plan de comidas semanal sugerido</h3>
+      <p style="color:var(--text-mid);margin-bottom:1.2rem;font-size:.92rem">Ejemplo de distribución para una dieta de 1800–2000 kcal/día. Ajusta porciones según tus objetivos personales.</p>
+      <table class="meal-plan-table">
+        <thead><tr><th>Día</th><th>Desayuno</th><th>Almuerzo</th><th>Cena</th><th>Snack</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td class="meal-name">Lunes</td><td>Avena con frutos rojos</td><td>Pollo + arroz integral + brócoli</td><td>Ensalada de espinacas con salmón</td><td>Manzana + mantequilla almendras</td><td><span class="kcal-badge">1,930 kcal</span></td></tr>
+          <tr><td class="meal-name">Martes</td><td>Omelet de vegetales</td><td>Bowl de frijoles y quinoa</td><td>Huevos con champiñones</td><td>Yogur griego con moras</td><td><span class="kcal-badge">1,810 kcal</span></td></tr>
+          <tr><td class="meal-name">Miércoles</td><td>Tostada de aguacate y huevo</td><td>Tacos de pescado</td><td>Crema de zanahoria y jengibre</td><td>Zanahoria con hummus</td><td><span class="kcal-badge">1,975 kcal</span></td></tr>
+          <tr><td class="meal-name">Jueves</td><td>Yogur + granola + kiwi</td><td>Atún con garbanzos</td><td>Tilapia al limón con ejotes</td><td>Frutos secos mixtos</td><td><span class="kcal-badge">1,840 kcal</span></td></tr>
+          <tr><td class="meal-name">Viernes</td><td>Smoothie bowl de fresa</td><td>Wrap de pavo y vegetales</td><td>Stir fry de tofu y verduras</td><td>Chocolate negro + fresas</td><td><span class="kcal-badge">1,760 kcal</span></td></tr>
+          <tr><td class="meal-name">Sábado</td><td>Hotcakes de avena</td><td>Sopa de pollo con fideos</td><td>Burrito bowl vegetales</td><td>Huevo duro con aguacate</td><td><span class="kcal-badge">1,870 kcal</span></td></tr>
+          <tr><td class="meal-name">Domingo</td><td>Avena con plátano y canela</td><td>Pollo al horno con camote</td><td>Ensalada mediterránea ligera</td><td>Yogur + fresas</td><td><span class="kcal-badge">1,820 kcal</span></td></tr>
+        </tbody>
+      </table>
+      <div class="emergency-banner">
+        <span class="eb-icon">⚠️</span>
+        <p><strong>Recuerda:</strong> Este plan es orientativo y general. Para un plan personalizado adaptado a tu edad, peso, actividad física y condiciones de salud específicas, consulta con un nutriólogo certificado. Visita nuestra sección de <strong style="cursor:pointer;color:#7d5a00;text-decoration:underline" onclick="showPage('nutriologos',null)">Nutriólogos</strong> para encontrar uno.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ NUTRIÓLOGOS PAGE ══════════════════════ -->
+<div id="page-nutriologos" class="page">
+  <div class="inner-hero">
+    <button class="back-btn" onclick="showPage('home',null)">← Volver al inicio</button>
+    <div class="page-tag">👩‍⚕️ Directorio profesional</div>
+    <h2>Nutriólogos certificados</h2>
+    <p>Conecta con profesionales de la nutrición avalados y con experiencia. Una consulta puede transformar tu relación con la comida y tu salud para siempre.</p>
+  </div>
+  <div class="content-area">
+
+    <div class="emergency-banner">
+      <span class="eb-icon">ℹ️</span>
+      <p>Todos los profesionales listados cuentan con cédula profesional vigente y son miembros de asociaciones de nutrición reconocidas. Los horarios y disponibilidad pueden variar. Te recomendamos llamar antes de tu visita para confirmar cita.</p>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterNutri('all',this)">Todos</button>
+      <button class="filter-btn" onclick="filterNutri('deportiva',this)">🏃 Deportiva</button>
+      <button class="filter-btn" onclick="filterNutri('clinica',this)">🏥 Clínica</button>
+      <button class="filter-btn" onclick="filterNutri('infantil',this)">👶 Infantil</button>
+      <button class="filter-btn" onclick="filterNutri('vegana',this)">🌱 Vegana/Vegetariana</button>
+      <button class="filter-btn" onclick="filterNutri('diabetes',this)">💉 Diabetes</button>
+    </div>
+
+    <div class="nutri-grid" id="nutri-grid">
+
+      <div class="nutri-card" data-specialty="clinica deportiva">
+        <div class="nutri-header">
+          <div class="nutri-avatar">👩‍⚕️</div>
+          <div class="nutri-header-text">
+            <h3>Dra. Laura Martínez Soto</h3>
+            <span>Nutrición Clínica & Deportiva</span>
+            <div><span class="nutri-specialty">Clínica</span><span class="nutri-specialty">Deportiva</span></div>
+          </div>
+        </div>
+        <div class="nutri-body">
+          <div class="nutri-rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span style="font-size:.8rem;color:var(--text-light);margin-left:.3rem">5.0 (142 reseñas)</span></div>
+          <p>Especialista en nutrición clínica y deportiva con 12 años de experiencia. Enfoque en pérdida de peso sostenible, rendimiento atlético y trastornos metabólicos.</p>
+          <div class="nutri-info">
+            <div class="nutri-info-row"><span class="icon">📍</span><span>Col. Polanco, CDMX · Consulta presencial y en línea</span></div>
+            <div class="nutri-info-row"><span class="icon">🕐</span><span>Lun–Vie: 9:00–19:00 · Sáb: 9:00–14:00</span></div>
+            <div class="nutri-info-row"><span class="icon">💰</span><span>Consulta inicial $600 MXN · Seguimiento $450 MXN</span></div>
+            <div class="nutri-info-row"><span class="icon">🎓</span><span>Cédula Profesional: 8743291 · Maestría UNAM</span></div>
+          </div>
+          <div style="margin-bottom:.8rem"><span class="nutri-badge">Diabetes tipo 2</span><span class="nutri-badge">Obesidad</span><span class="nutri-badge">Atletas</span></div>
+          <div class="nutri-actions">
+            <a class="btn-call" href="tel:+525512345678">📞 55 1234-5678</a>
+            <a class="btn-whatsapp" href="https://wa.me/525512345678" target="_blank">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nutri-card" data-specialty="vegana infantil">
+        <div class="nutri-header">
+          <div class="nutri-avatar">🧑‍⚕️</div>
+          <div class="nutri-header-text">
+            <h3>Lic. Carlos Reyes Herrera</h3>
+            <span>Nutrición Vegana e Infantil</span>
+            <div><span class="nutri-specialty">Vegana</span><span class="nutri-specialty">Infantil</span></div>
+          </div>
+        </div>
+        <div class="nutri-body">
+          <div class="nutri-rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span style="font-size:.8rem;color:var(--text-light);margin-left:.3rem">4.9 (98 reseñas)</span></div>
+          <p>Especializado en dietas plant-based, nutrición pediátrica y alimentación complementaria en bebés. Asesoría para familias que adoptan estilo de vida vegano de forma saludable.</p>
+          <div class="nutri-info">
+            <div class="nutri-info-row"><span class="icon">📍</span><span>Coyoacán, CDMX · Consulta en línea disponible</span></div>
+            <div class="nutri-info-row"><span class="icon">🕐</span><span>Mar–Sáb: 10:00–18:00</span></div>
+            <div class="nutri-info-row"><span class="icon">💰</span><span>Consulta inicial $500 MXN · Paquete mensual $1,200 MXN</span></div>
+            <div class="nutri-info-row"><span class="icon">🎓</span><span>Cédula: 9012847 · Certificado ICAN</span></div>
+          </div>
+          <div style="margin-bottom:.8rem"><span class="nutri-badge">Plant-based</span><span class="nutri-badge">Niños 0–12</span><span class="nutri-badge">Lactancia</span></div>
+          <div class="nutri-actions">
+            <a class="btn-call" href="tel:+525598765432">📞 55 9876-5432</a>
+            <a class="btn-whatsapp" href="https://wa.me/525598765432" target="_blank">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nutri-card" data-specialty="diabetes clinica">
+        <div class="nutri-header">
+          <div class="nutri-avatar">👩‍⚕️</div>
+          <div class="nutri-header-text">
+            <h3>Dra. Ana García Villanueva</h3>
+            <span>Diabetes, Metabolismo & Enf. Crónicas</span>
+            <div><span class="nutri-specialty">Diabetes</span><span class="nutri-specialty">Clínica</span></div>
+          </div>
+        </div>
+        <div class="nutri-body">
+          <div class="nutri-rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span><span style="font-size:.8rem;color:var(--text-light);margin-left:.3rem">4.7 (210 reseñas)</span></div>
+          <p>Nutrióloga con doctorado en enfermedades metabólicas. Especialista en diabetes tipo 1 y 2, síndrome metabólico, hipertensión y enfermedad renal. Trabajo coordinado con médicos.</p>
+          <div class="nutri-info">
+            <div class="nutri-info-row"><span class="icon">📍</span><span>Insurgentes Sur, CDMX · Hospital Ángeles</span></div>
+            <div class="nutri-info-row"><span class="icon">🕐</span><span>Lun, Mié, Vie: 8:00–15:00 · Jue: 15:00–20:00</span></div>
+            <div class="nutri-info-row"><span class="icon">💰</span><span>Consulta $750 MXN · Acepta IMSS y Seguro Médico</span></div>
+            <div class="nutri-info-row"><span class="icon">🎓</span><span>Cédula: 7623018 · Doctorado IPN</span></div>
+          </div>
+          <div style="margin-bottom:.8rem"><span class="nutri-badge">Diabetes T1/T2</span><span class="nutri-badge">Hipertensión</span><span class="nutri-badge">Renal</span></div>
+          <div class="nutri-actions">
+            <a class="btn-call" href="tel:+525511223344">📞 55 1122-3344</a>
+            <a class="btn-whatsapp" href="https://wa.me/525511223344" target="_blank">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nutri-card" data-specialty="deportiva">
+        <div class="nutri-header">
+          <div class="nutri-avatar">🏋️</div>
+          <div class="nutri-header-text">
+            <h3>Lic. Miguel Torres Fuentes</h3>
+            <span>Nutrición Deportiva de Alto Rendimiento</span>
+            <div><span class="nutri-specialty">Deportiva</span></div>
+          </div>
+        </div>
+        <div class="nutri-body">
+          <div class="nutri-rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span style="font-size:.8rem;color:var(--text-light);margin-left:.3rem">5.0 (76 reseñas)</span></div>
+          <p>Ex-atleta olímpico reconvertido en nutricionista deportivo. Trabaja con equipos profesionales de fútbol, atletismo y crossfit. Especialista en periodización nutricional y suplementación.</p>
+          <div class="nutri-info">
+            <div class="nutri-info-row"><span class="icon">📍</span><span>Santa Fe, CDMX · Centro Deportivo VidaActiva</span></div>
+            <div class="nutri-info-row"><span class="icon">🕐</span><span>Lun–Sáb: 7:00–21:00</span></div>
+            <div class="nutri-info-row"><span class="icon">💰</span><span>Consulta inicial $800 MXN · Paquete 3 meses $3,500 MXN</span></div>
+            <div class="nutri-info-row"><span class="icon">🎓</span><span>Cédula: 8901234 · Cert. ISSN · Maestría en Deporte</span></div>
+          </div>
+          <div style="margin-bottom:.8rem"><span class="nutri-badge">Masa muscular</span><span class="nutri-badge">Pérdida de grasa</span><span class="nutri-badge">Suplementos</span></div>
+          <div class="nutri-actions">
+            <a class="btn-call" href="tel:+525544556677">📞 55 4455-6677</a>
+            <a class="btn-whatsapp" href="https://wa.me/525544556677" target="_blank">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nutri-card" data-specialty="infantil clinica">
+        <div class="nutri-header">
+          <div class="nutri-avatar">👶</div>
+          <div class="nutri-header-text">
+            <h3>Dra. Sofía Mendoza Paz</h3>
+            <span>Nutrición Pediátrica e Integral Familiar</span>
+            <div><span class="nutri-specialty">Infantil</span><span class="nutri-specialty">Clínica</span></div>
+          </div>
+        </div>
+        <div class="nutri-body">
+          <div class="nutri-rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span style="font-size:.8rem;color:var(--text-light);margin-left:.3rem">4.8 (163 reseñas)</span></div>
+          <p>Nutrióloga pediátrica especializada en el desarrollo infantil, hábitos alimenticios desde la primera infancia y abordaje familiar. Consultora de lactancia certificada IBCLC.</p>
+          <div class="nutri-info">
+            <div class="nutri-info-row"><span class="icon">📍</span><span>Del Valle, CDMX · Consulta presencial y videollamada</span></div>
+            <div class="nutri-info-row"><span class="icon">🕐</span><span>Lun–Jue: 9:00–17:00 · Sáb: 9:00–13:00</span></div>
+            <div class="nutri-info-row"><span class="icon">💰</span><span>Consulta $550 MXN · Paquete familiar $1,800 MXN</span></div>
+            <div class="nutri-info-row"><span class="icon">🎓</span><span>Cédula: 7830291 · IBCLC · Especialidad HIMFG</span></div>
+          </div>
+          <div style="margin-bottom:.8rem"><span class="nutri-badge">Bebés 0–2</span><span class="nutri-badge">Selectividad</span><span class="nutri-badge">Obesidad infantil</span></div>
+          <div class="nutri-actions">
+            <a class="btn-call" href="tel:+525566778899">📞 55 6677-8899</a>
+            <a class="btn-whatsapp" href="https://wa.me/525566778899" target="_blank">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nutri-card" data-specialty="vegana clinica">
+        <div class="nutri-header">
+          <div class="nutri-avatar">🌱</div>
+          <div class="nutri-header-text">
+            <h3>Lic. Valentina Cruz Romero</h3>
+            <span>Nutrición Integrativa & Dietas Plant-Based</span>
+            <div><span class="nutri-specialty">Vegana</span><span class="nutri-specialty">Clínica</span></div>
+          </div>
+        </div>
+        <div class="nutri-body">
+          <div class="nutri-rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span style="font-size:.8rem;color:var(--text-light);margin-left:.3rem">4.9 (89 reseñas)</span></div>
+          <p>Nutrióloga integrativa con enfoque holístico. Especializada en dietas veganas, vegetarianas, sin gluten y sin lactosa. Asesora en conciencia alimentaria y relación emocional con la comida.</p>
+          <div class="nutri-info">
+            <div class="nutri-info-row"><span class="icon">📍</span><span>Roma Norte, CDMX · 100% en línea disponible</span></div>
+            <div class="nutri-info-row"><span class="icon">🕐</span><span>Lun–Vie: 10:00–20:00</span></div>
+            <div class="nutri-info-row"><span class="icon">💰</span><span>Consulta $480 MXN · Taller grupal $250 MXN</span></div>
+            <div class="nutri-info-row"><span class="icon">🎓</span><span>Cédula: 9234801 · Cert. Nutrición Integrativa NY</span></div>
+          </div>
+          <div style="margin-bottom:.8rem"><span class="nutri-badge">Sin gluten</span><span class="nutri-badge">Intolerancias</span><span class="nutri-badge">Mindful eating</span></div>
+          <div class="nutri-actions">
+            <a class="btn-call" href="tel:+525577889900">📞 55 7788-9900</a>
+            <a class="btn-whatsapp" href="https://wa.me/525577889900" target="_blank">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="emergency-banner" style="margin-top:2rem">
+      <span class="eb-icon">📋</span>
+      <p><strong>Aviso legal:</strong> Los números y datos de contacto presentados son informativos y de ejemplo. VidaVerde no se responsabiliza por la disponibilidad o calidad de los servicios. Verifica siempre la cédula profesional de tu nutriólogo en el Registro Nacional de Profesionistas (<strong>cedulaprofesional.sep.gob.mx</strong>) antes de tu consulta.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── FILTER NUTRIÓLOGOS ───
+  function filterNutri(specialty, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.nutri-card').forEach(card => {
+      const spec = card.dataset.specialty || '';
+      card.style.display = (specialty === 'all' || spec.includes(specialty)) ? 'block' : 'none';
+    });
+  }
+
+  // ─── PAGE NAVIGATION ───
+  function showPage(id, linkEl) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo(0,0);
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    if (linkEl) linkEl.classList.add('active');
+    // Animate progress bars on nutricion page
+    if (id === 'nutricion') setTimeout(animateProgress, 200);
+  }
+
+  // ─── TABS ───
+  function switchTab(page, tabId, btn) {
+    document.querySelectorAll(`#page-${page} .tab-content`).forEach(t => t.classList.remove('active'));
+    document.querySelectorAll(`#page-${page} .tab-btn`).forEach(b => b.classList.remove('active'));
+    document.getElementById(`${page}-${tabId}`).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ─── SEARCH ───
+  const searchData = [
+    { label: '🥦 Grupos alimenticios', page: 'alimentacion' },
+    { label: '🍲 Recetas saludables', page: 'recetas' },
+    { label: '⚗️ Macronutrientes y vitaminas', page: 'nutricion' },
+    { label: '📋 Hábitos diarios', page: 'habitos' },
+    { label: '🥗 Bowl de quinoa', page: 'recetas' },
+    { label: '🐟 Salmón al horno', page: 'recetas' },
+    { label: '💧 Hidratación y agua', page: 'habitos' },
+    { label: '🌾 El plato saludable', page: 'alimentacion' },
+    { label: '❌ Mitos sobre dieta', page: 'alimentacion' },
+    { label: '🦴 Calcio y minerales', page: 'nutricion' },
+    { label: '🍽️ Desayunos balanceados', page: 'comidas' },
+    { label: '☀️ Almuerzos nutritivos', page: 'comidas' },
+    { label: '🌙 Cenas ligeras', page: 'comidas' },
+    { label: '🍎 Snacks saludables', page: 'comidas' },
+    { label: '📅 Plan semanal de comidas', page: 'comidas' },
+    { label: '👩‍⚕️ Nutriólogos certificados', page: 'nutriologos' },
+    { label: '🏃 Nutrición deportiva', page: 'nutriologos' },
+    { label: '💉 Nutriólogo para diabetes', page: 'nutriologos' },
+    { label: '👶 Nutriólogo infantil', page: 'nutriologos' },
+    { label: '🌱 Nutriólogo vegano', page: 'nutriologos' },
+  ];
+  const input = document.getElementById('searchInput');
+  const results = document.getElementById('search-results');
+
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase().trim();
+    if (!q) { results.classList.remove('show'); return; }
+    const filtered = searchData.filter(d => d.label.toLowerCase().includes(q));
+    if (!filtered.length) { results.classList.remove('show'); return; }
+    results.innerHTML = filtered.map(d =>
+      `<div class="search-result-item" onclick="goSearch('${d.page}')">${d.label}</div>`
+    ).join('');
+    results.classList.add('show');
+  });
+
+  function goSearch(page) {
+    showPage(page, null);
+    input.value = '';
+    results.classList.remove('show');
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap')) results.classList.remove('show');
+  });
+
+  // ─── TOAST ───
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ─── NEWSLETTER ───
+  function subscribeNewsletter() {
+    const email = document.getElementById('emailInput').value;
+    if (!email || !email.includes('@')) { showToast('Por favor ingresa un correo válido ✉️'); return; }
+    showToast('¡Suscripción exitosa! Bienvenid@ 🌿');
+    document.getElementById('emailInput').value = '';
+  }
+
+  // ─── PROGRESS BARS ───
+  function animateProgress() {
+    document.querySelectorAll('.progress-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width + '%';
+    });
+  }
+
+  // ─── CHECKLIST ───
+  let checkCount = 0;
+  const total = 15;
+  const emojis = ['🌱','🌿','💪','⭐','🏆'];
+  const msgs = ['¡Empieza tu día marcando hábitos!','¡Buen comienzo!','¡Vas muy bien!','¡Casi perfecto!','¡Día completado! 🎉'];
+
+  function toggleCheck(li) {
+    const wasChecked = li.classList.contains('checked');
+    li.classList.toggle('checked');
+    checkCount += wasChecked ? -1 : 1;
+    const idx = Math.min(Math.floor(checkCount / (total / 4)), 4);
+    document.getElementById('progress-emoji').textContent = emojis[idx];
+    document.getElementById('progress-msg').textContent = msgs[idx];
+    document.getElementById('progress-count').textContent = `${checkCount} de ${total} completados`;
+  }
+
+  // ─── SCROLL NAV ───
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+  });
+</script>
+</body>
+</html>
